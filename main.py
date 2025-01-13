@@ -1,10 +1,14 @@
 #pgzero
 
 """
-M6.L3: Actividad #1 - "Clicker animal"
-Objetivo: Crear ventana de juego
+M6.L3: Actividad #2 - "Aumentar la puntuacion"
+Objetivo: Agregar condición de collide-point al Actor y animaciones
 
 PACK DE ASSETS: https://kenney.nl/assets/animal-pack-redux
+
+Paso Nº 1: Creamos una variable que controle el multiplicador de click (cuántos puntos sumamos al hacer click sobre nuestro Actor)
+Paso Nº 2: Modificamos on_mouse_down() para que SOLO aumente la puntuación cuando el click sea sobre el Personaje
+Paso Nº 3: Agregamos una pequeña animación al hacer click sobre el personaje
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -12,7 +16,10 @@ HEIGHT = 400 # Altura de la ventana
 
 TITLE = "Animal Clicker" # Título de la ventana de juego
 FPS = 30 # Fotogramas por segundo
+
+# VARIABLES
 puntuacion = 0
+click_mult = 1 # multiplicador del valor por click
 
 #OBJETOS
 fondo = Actor("background")
@@ -25,5 +32,11 @@ def draw():
     
 def on_mouse_down(button, pos):
     global puntuacion
-    if button == mouse.LEFT:
-        puntuacion += 1
+    if (button == mouse.LEFT):
+        if (animal.collidepoint(pos)):
+            # Si el click fue en nuestro animal:
+            puntuacion += click_mult
+            # Animación:
+            animal.y = 200
+            animate(animal, tween="bounce_end", duration = 0.5, y = 250)
+            
