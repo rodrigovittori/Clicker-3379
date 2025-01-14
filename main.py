@@ -1,15 +1,17 @@
 #pgzero
 """
-M6.L3: Actividad #9 (Extra) - "Incremento de precios"
-Objetivo: Agregar condiciones para que el costo de las bonificaciones aumente
+M6.L3: Tarea #1 - "Volver al menú"
+Objetivo: Agregar un Actor que al hacerle click nos permita volver al menú principal
 
 PACK DE ASSETS: 
 ANIMALES: https://kenney.nl/assets/animal-pack-redux 
 BOTONES:  https://kenney.nl/assets/ui-pack
 
-Para la compra:
+Paso Nº 1: Crear nuevo Actor "boton_salir"
+Paso Nº 2: Modificar nuestro draw() para que lo muestre
+Paso Nº 3: Implementar lógica del click
 
-Paso Nº 1: Tras validación de compra, bonus_x.precio *= 2
+Nota: Eliminar cheat de salir al menú
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -44,6 +46,7 @@ bonus_3.potenciador = 50
 bonus_3.ya_activado = False
 
 boton_jugar = Actor("play", (300,100))
+boton_salir = Actor("cross", (WIDTH - 20, 20))
 
 """ #####################
    # FUNCIONES PROPIAS #
@@ -93,6 +96,8 @@ def draw():
         bonus_3.draw()
         screen.draw.text(("+" + str(bonus_3.potenciador) + " " + token + " cada 2 seg"), center = (450, 280), color = "black", fontsize = 20)
         screen.draw.text(("PRECIO: " + str(bonus_3.precio) + " " + token), center = (450, 310), color = "black", fontsize = 20)
+
+        boton_salir.draw()
     
 def on_mouse_down(button, pos):
     global puntuacion, modo_actual
@@ -187,6 +192,10 @@ def on_mouse_down(button, pos):
                 animate(bonus_3, tween='bounce_end', duration=0.25, x=450)
                 bonus_3.x = 455
                 animate(bonus_3, tween='bounce_end', duration=0.25, x=450)
+                
+        elif boton_salir.collidepoint(pos):
+            # Si el click fue sobre el botón de salir:
+            modo_actual = "menu"
 
 # CHEAT:
 
@@ -198,6 +207,3 @@ def on_key_down(key):
         
     if keyboard.a:
         puntuacion -= 500
-
-    if keyboard.q:
-        modo_actual = "menu"
