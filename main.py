@@ -1,18 +1,22 @@
 #pgzero
 """
-M6.L3: Actividad #7 (Extra) - "Superbonificación"
-Objetivo: Agregar un tercer bonus
-
-Nota: La actividad #6 es el Kahoot! de clase (no hay código)
+M6.L3: Actividad #8 (Extra) - "Animación de botones"
+Objetivo: Agregar animaciones a los botones de bonificaciones
 
 PACK DE ASSETS: 
 ANIMALES: https://kenney.nl/assets/animal-pack-redux 
 BOTONES:  https://kenney.nl/assets/ui-pack
 
-Paso Nº 1: Crear un Actor para el bonus_3
-Paso Nº 2: Crear los atributos para su precio, poteciador y un flag que indique si ya ha sido activado
-Paso Nº 3: Modificar nuestro draw() para que muestre su botón
-Paso Nº 4: Implementar la lógica para que al clickearlo se pueda comprar/mejorar el bonus
+Para la compra:
+
+Paso Nº 1: Aumentar la posición Y del bonus
+Paso Nº 2: Crear una animación de rebote que lo regrese a su altura original
+
+En caso de NO poder comprarlo:
+
+Paso Nº 3: Aumentar la posición X del bonus
+Paso Nº 4: Crear una animación de rebote que lo regrese a su posición original
+Paso Nº 5: Repetir pasos 3 y 4 PERO en dirección opuesta para dar la sensación de "rebote"
 
 """
 
@@ -130,6 +134,8 @@ def on_mouse_down(button, pos):
                 # bonus_1.precio *= 2
 
                 # Animamos el botón cuando pueda comprarlo
+                bonus_1.y = 105
+                animate(bonus_1, tween='bounce_end', duration=0.5, y=100)
             
             else:
                 # Si no tiene suficientes puntos para comprarlo
@@ -154,6 +160,8 @@ def on_mouse_down(button, pos):
                 # bonus_2.precio *= 2
 
                 # Animamos el botón cuando pueda comprarlo
+                bonus_2.y = 205
+                animate(bonus_2, tween='bounce_end', duration=0.5, y=200)
                 
             else:
                 # Si no tiene suficientes puntos para comprarlo
@@ -178,13 +186,15 @@ def on_mouse_down(button, pos):
                 # bonus_3.precio *= 2
 
                 # Animamos el botón cuando pueda comprarlo
+                bonus_3.y = 305
+                animate(bonus_3, tween='bounce_end', duration=0.5, y=300)
                 
             else:
                 # Si no tiene suficientes puntos para comprarlo
-                bonus_2.x = 445
-                animate(bonus_2, tween='bounce_end', duration=0.25, x=450)
-                bonus_2.x = 455
-                animate(bonus_2, tween='bounce_end', duration=0.25, x=450)
+                bonus_3.x = 445
+                animate(bonus_3, tween='bounce_end', duration=0.25, x=450)
+                bonus_3.x = 455
+                animate(bonus_3, tween='bounce_end', duration=0.25, x=450)
 
 # CHEAT:
 
