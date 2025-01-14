@@ -117,7 +117,7 @@ def on_mouse_down(button, pos):
                 # Chequeamos si tiene suficientes puntos para comprarlo:
                 # Chequeamos si ya está activo
                 if (not bonus_1.ya_activado):
-                    schedule_interval(el_bonus_2, 2)
+                    schedule_interval(el_bonus_1, 2)
                     bonus_1.ya_activado = True
                 else:
                     bonus_1.potenciador += 1
