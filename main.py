@@ -1,16 +1,27 @@
 #pgzero
 """
-M6.L3: Tarea #2 - "Dos nuevos botones"
-Objetivo: Agregar botones (en el menú principal) para los modos "tienda" y "coleccion"
+M6.L4: Actividad #1 - "Tienda"
+Objetivo: Poder ingresar a la tienda y mostrar los nuevos actores y sus precios
+
+NOTA: NO implementamos lógica de compra sino a partir de la próxima actividad
+NOTA 2: Hay demasiado código que NO se ve por no tener la lógica de click
 
 PACK DE ASSETS: 
 ANIMALES: https://kenney.nl/assets/animal-pack-redux 
 BOTONES:  https://kenney.nl/assets/ui-pack
 
-Paso Nº 1: Crear nuevos Actores (boton_tienda y boton_coleccion)
-Paso Nº 2: Modificar nuestro draw() para que los muestre
+Paso Nº 1: Agregar los nuevos actores (cocodrilo e hipopotamo)
+Paso Nº 2: Crear listas coleccion_completa[] y coleccion_skins[]
+Paso Nº 3: Agregamos en draw() el modo tienda y colección
+Paso Nº 4: Agregamos lógica de click en los botones del menú ppal y el boton_salir en los nuevos modos
 
-NOTA: La lógica del click la implementaremos la clase que viene :)
+Extra: Ajustamos tamaño puntuación y otros detalles:
+    Paso Nº 1: Creamos variable global tam_fuente_punt
+    Paso Nº 2: Creamos funcion actualizar_tam_fuente_punt()
+    Paso Nº 3: La agregamos a nuestro update()
+
+Extra 2: 'j' para jirafa
+
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -23,11 +34,24 @@ FPS = 30 # Fotogramas por segundo
 puntuacion = 0
 click_mult = 1 # multiplicador del valor por click
 token = "₽"
-modo_actual = "menu"
+modo_actual = "menu" # Valores posibles: "menu"//"juego"//"tienda"//"coleccion"
+tam_fuente_punt = 96 # Altura en píxeles del indicador de puntuacion
 
 #OBJETOS
 fondo = Actor("background")
 animal = Actor("giraffe", (150, 250))
+
+# ANIMALES
+
+cocodrilo = Actor("crocodile", (120, 200))
+cocodrilo.precio = 500
+cocodrilo.mult = 2
+
+hipopotamo = Actor("hippo", (300, 200))
+hipopotamo.precio = 2500
+hipopotamo.mult = 3
+
+# Próximamente: otro animal
 
 bonus_1 = Actor("bonus", (450, 100))
 bonus_1.precio = 15
@@ -49,6 +73,15 @@ boton_tienda =    Actor("tienda", (300, 200))
 boton_coleccion = Actor("coleccion", (300, 300))
 boton_salir =     Actor("cross", (WIDTH - 20, 20))
 
+# Listas skins
+coleccion_skins = [] # lista de skins desbloqueadas/compradas
+
+coleccion_completa = [] # lista que contiene todas las skins desbloqueables por el jugador
+coleccion_completa.append(cocodrilo)
+coleccion_completa.append(hipopotamo)
+# To-do: agregar animal extra
+
+
 """ #####################
    # FUNCIONES PROPIAS #
   ##################### """
@@ -64,6 +97,17 @@ def el_bonus_2():
 def el_bonus_3():
     global puntuacion
     puntuacion += bonus_3.potenciador
+
+def actualizar_tam_fuente_punt():
+  global tam_fuente_punt
+
+  # Ajustar el tamaño de la fuente según el tamaño de la puntuación
+  if puntuacion < 1000:
+    tam_fuente_punt = 96
+  elif puntuacion < 10000:
+    tam_fuente_punt = 72
+  else:
+    tam_fuente_punt = 48
 
 """ ####################
    # FUNCIONES PGZERO #
@@ -83,8 +127,8 @@ def draw():
         animal.draw()
         
         # Dibujamos puntuacion
-        # To-do: Agregar control que chequee que el texto no se salga de la pantalla (ajusta vble fontsize) 
-        screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = 96)
+        # Ahora nuestra puntuación cambia de tamaño según la cantidad de créditos/tokens que tengo
+        screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = tam_fuente_punt)
     
         # Dibujamos botones bonus
     
@@ -101,6 +145,49 @@ def draw():
         screen.draw.text(("PRECIO: " + str(bonus_3.precio) + " " + token), center = (450, 310), color = "black", fontsize = 20)
 
         boton_salir.draw()
+
+    elif (modo_actual == "tienda"):
+        fondo.draw()
+
+        # Si ya desbloqueamos TODAS las skins
+        if coleccion_skins == coleccion_completa:
+            screen.draw.text("¡FELICIDADES!", center=(WIDTH/2, HEIGHT/3), color = "white", background = "black" , fontsize = 42)
+            screen.draw.text("Has adquirido todas las skins", center=(WIDTH/2, HEIGHT/3*2), color = "white", background = "black" , fontsize = 32)
+
+        else:
+            for skin in coleccion_completa:
+                if skin not in coleccion_skins:
+                    # Si NO la hemos adquirido:
+                    skin.draw()
+                    screen.draw.text((str(skin.precio) + token), center=(skin.x, 300), color = "white" , fontsize = 36)
+
+        # Dibujamos puntuacion
+        screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = tam_fuente_punt)
+        
+        boton_salir.draw()
+
+    elif (modo_actual == "coleccion"):
+        fondo.draw()
+
+        # Dibujamos puntuacion
+        screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = tam_fuente_punt)
+
+        # Dibujar Skins desbloqueables - ( lo vamos a modificar más adelante)
+
+        for skin in coleccion_skins:
+            skin.draw()
+
+        # Dibujar ? para las NO-desbloqueadas
+
+        for skin in coleccion_completa:
+            if skin not in coleccion_skins:
+                screen.draw.text(("⚫"), center=(skin.pos), color = "white" , fontsize = 120)
+                screen.draw.text("?", center=(skin.pos), color = "white", fontsize = 96)
+
+            # mostramos habilidades/multiplicadores skins
+            screen.draw.text((str(skin.mult) + "x " + token ), center=(skin.x, 300), color = "white" , fontsize = 36)
+        
+        boton_salir.draw()
     
 def on_mouse_down(button, pos):
     global puntuacion, modo_actual
@@ -110,11 +197,20 @@ def on_mouse_down(button, pos):
             # Si el click fue sobre el boton "Jugar":
             modo_actual = "juego"
 
+        if boton_tienda.collidepoint(pos):
+            # Si el click fue sobre el boton "Tienda":
+            modo_actual = "tienda"
+
+        if boton_coleccion.collidepoint(pos):
+            # Si el click fue sobre el boton "Colección":
+            modo_actual = "coleccion"
+
     elif (button == mouse.LEFT) and (modo_actual == "juego"):
         
         if (animal.collidepoint(pos)):
             # Si el click fue en nuestro animal:
             puntuacion += click_mult
+            actualizar_tam_fuente_punt()
             # Animación:
             animal.y = 200
             animate(animal, tween="bounce_end", duration = 0.5, y = 250)
@@ -199,6 +295,17 @@ def on_mouse_down(button, pos):
         elif boton_salir.collidepoint(pos):
             # Si el click fue sobre el botón de salir:
             modo_actual = "menu"
+    
+    if (button == mouse.LEFT) and (modo_actual == "tienda"):
+         if boton_salir.collidepoint(pos):
+            # Si el click fue sobre el botón de salir:
+            modo_actual = "menu"
+
+    if (button == mouse.LEFT) and (modo_actual == "coleccion"):
+         if boton_salir.collidepoint(pos):
+            # Si el click fue sobre el botón de salir:
+            modo_actual = "menu"
+         
 
 # CHEAT:
 
@@ -210,3 +317,7 @@ def on_key_down(key):
         
     if keyboard.a:
         puntuacion -= 500
+
+    if keyboard.j:
+        animal.image = "giraffe"
+        click_mult = 1
