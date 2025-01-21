@@ -1,26 +1,18 @@
 #pgzero
 """
-M6.L4: Actividad #1 - "Tienda"
-Objetivo: Poder ingresar a la tienda y mostrar los nuevos actores y sus precios
-
-NOTA: NO implementamos lógica de compra sino a partir de la próxima actividad
-NOTA 2: Hay demasiado código que NO se ve por no tener la lógica de click
+M6.L4: Actividad # 2 - "Compra de skins"
+Objetivo: Poder comprar y cambiar las skins del personaje
 
 PACK DE ASSETS: 
 ANIMALES: https://kenney.nl/assets/animal-pack-redux 
 BOTONES:  https://kenney.nl/assets/ui-pack
 
-Paso Nº 1: Agregar los nuevos actores (cocodrilo e hipopotamo)
-Paso Nº 2: Crear listas coleccion_completa[] y coleccion_skins[]
-Paso Nº 3: Agregamos en draw() el modo tienda y colección
-Paso Nº 4: Agregamos lógica de click en los botones del menú ppal y el boton_salir en los nuevos modos
+Paso Nº 1: Agregar la lógica de click en tienda y en colección (global click_mult)
+Paso Nº 2: Verificar que el jugador tenga los tokens suficientes ara desbloquear las skins
+           (y que no pueda comprar skins ya adquiridas)
+Paso Nº 3: Actualizar la skin y su multiplicador tras la compra
 
-Extra: Ajustamos tamaño puntuación y otros detalles:
-    Paso Nº 1: Creamos variable global tam_fuente_punt
-    Paso Nº 2: Creamos funcion actualizar_tam_fuente_punt()
-    Paso Nº 3: La agregamos a nuestro update()
-
-Extra 2: 'j' para jirafa
+Extra: corregimos detalle estético al comprar todas las skins
 
 """
 
@@ -161,8 +153,12 @@ def draw():
                     skin.draw()
                     screen.draw.text((str(skin.precio) + token), center=(skin.x, 300), color = "white" , fontsize = 36)
 
-        # Dibujamos puntuacion
-        screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = tam_fuente_punt)
+
+            # NOTA: Ponemos acá la puntuación porque no la queremos mnostrar cuando el jugador ya haya desbloqueado todo
+            # Dibujamos puntuacion
+            screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = tam_fuente_punt)
+
+        
         
         boton_salir.draw()
 
@@ -190,7 +186,7 @@ def draw():
         boton_salir.draw()
     
 def on_mouse_down(button, pos):
-    global puntuacion, modo_actual
+    global puntuacion, modo_actual, click_mult
     
     if (button == mouse.LEFT) and (modo_actual == "menu"):
         if boton_jugar.collidepoint(pos):
@@ -297,9 +293,34 @@ def on_mouse_down(button, pos):
             modo_actual = "menu"
     
     if (button == mouse.LEFT) and (modo_actual == "tienda"):
-         if boton_salir.collidepoint(pos):
+         
+        if boton_salir.collidepoint(pos):
             # Si el click fue sobre el botón de salir:
             modo_actual = "menu"
+
+        # Nota: modificar por un bucle para todas las skins...
+        # Nota 2: Agregar animación horizontal cuando NO tenga tokens suficientes para comprarlo
+
+        """
+        Paso 1: Chequear el click (collidepoint)
+        Paso 2: Verificar que el jugador tenga suficientes créditos
+        SI LOS TIENE:
+        Paso 3: Restar los créditos
+        Paso 4: Cambiar la skin actual (y el modificador de click)
+        Paso 5: Agregarlo a la lista de skins desbloqueadas
+        """
+
+        for skin in coleccion_completa:
+            if (  skin.collidepoint(pos) and         # Si le doy click a una skin 
+                 (skin not in coleccion_skins) and   # Y esa skin NO la tenga desbloqueada
+                 (puntuacion >= skin.precio) ):      # Y tengo suficientes créditos/tokens
+
+                puntuacion -= skin.precio            # Restamos los créditos para comprar
+                animal.image = skin.image            # Cambiamos la skin de nuestro PJ
+                click_mult = skin.mult               # Actualizamos el mult de click
+                coleccion_skins.append(skin)         # Agrego la skin comprada a mi lista
+
+        # NOTA: Este método funcionará para otros animales SIEMPRE y cuando los incluya en coleccion_completa 
 
     if (button == mouse.LEFT) and (modo_actual == "coleccion"):
          if boton_salir.collidepoint(pos):
@@ -310,7 +331,7 @@ def on_mouse_down(button, pos):
 # CHEAT:
 
 def on_key_down(key):
-    global puntuacion, modo_actual
+    global puntuacion, modo_actual, click_mult
     
     if keyboard.d:
         puntuacion += 500
