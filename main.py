@@ -1,13 +1,15 @@
 #pgzero
 """
-M6.L4: Actividad # 3 - "Colección"
-Objetivo: Poder cambiar las skins del personaje por las que ya tengamos desbloqueadas
+M6.L4: Actividad # 4 - "Morsa"
+Objetivo: Agregar un nuevo personaje
 
 PACK DE ASSETS: 
 ANIMALES: https://kenney.nl/assets/animal-pack-redux 
 BOTONES:  https://kenney.nl/assets/ui-pack
 
-Paso Nº 1: Agregar la lógica de click en los actores en modo coleccion
+Paso Nº 1 Lo creamos
+Paso Nº 2 Le asignamos precio y potenciador de click
+Paso Nº 3 Lo agregamos a la lista coleccion_completa
 
 """
 
@@ -38,7 +40,9 @@ hipopotamo = Actor("hippo", (300, 200))
 hipopotamo.precio = 2500
 hipopotamo.mult = 3
 
-# Próximamente: otro animal
+morsa = Actor("walrus", (480, 200))
+morsa.precio = 7000
+morsa.mult = 4
 
 bonus_1 = Actor("bonus", (450, 100))
 bonus_1.precio = 15
@@ -66,8 +70,7 @@ coleccion_skins = [] # lista de skins desbloqueadas/compradas
 coleccion_completa = [] # lista que contiene todas las skins desbloqueables por el jugador
 coleccion_completa.append(cocodrilo)
 coleccion_completa.append(hipopotamo)
-# To-do: agregar animal extra
-
+coleccion_completa.append(morsa)
 
 """ #####################
    # FUNCIONES PROPIAS #
@@ -137,7 +140,7 @@ def draw():
         fondo.draw()
 
         # Si ya desbloqueamos TODAS las skins
-        if coleccion_skins == coleccion_completa:
+        if set(coleccion_skins) == set(coleccion_completa):
             screen.draw.text("¡FELICIDADES!", center=(WIDTH/2, HEIGHT/3), color = "white", background = "black" , fontsize = 42)
             screen.draw.text("Has adquirido todas las skins", center=(WIDTH/2, HEIGHT/3*2), color = "white", background = "black" , fontsize = 32)
 
@@ -152,8 +155,6 @@ def draw():
             # NOTA: Ponemos acá la puntuación porque no la queremos mnostrar cuando el jugador ya haya desbloqueado todo
             # Dibujamos puntuacion
             screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = tam_fuente_punt)
-
-        
         
         boton_salir.draw()
 
