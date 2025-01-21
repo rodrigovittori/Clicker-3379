@@ -1,16 +1,14 @@
 #pgzero
 """
-M6.L4: Actividad # 4 - "Morsa"
-Objetivo: Agregar un nuevo personaje
+M6.L4: Actividad 6 (Extra) - "Animación de las skins"
+Objetivo: Agregar animaciones...
 
 PACK DE ASSETS: 
 ANIMALES: https://kenney.nl/assets/animal-pack-redux 
 BOTONES:  https://kenney.nl/assets/ui-pack
 
-Paso Nº 1 Lo creamos
-Paso Nº 2 Le asignamos precio y potenciador de click
-Paso Nº 3 Lo agregamos a la lista coleccion_completa
-
+Paso Nº 1: En on_mouse_down() en el modo tienda, agrego animación horizontal cuando NO puedo comprarlo.
+Paso Nº 2: En on_mouse_down() en el modo colección, agrego animación vertical al seleccionar una skin.
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -308,7 +306,7 @@ def on_mouse_down(button, pos):
 
         for skin in coleccion_completa:
             if (  skin.collidepoint(pos) and         # Si le doy click a una skin 
-                 (skin not in coleccion_skins) and   # Y esa skin NO la tenga desbloqueada
+                 (skin not in coleccion_skins) and   # Y esa skin NO la tengo desbloqueada
                  (puntuacion >= skin.precio) ):      # Y tengo suficientes créditos/tokens
 
                 puntuacion -= skin.precio            # Restamos los créditos para comprar
@@ -316,7 +314,15 @@ def on_mouse_down(button, pos):
                 click_mult = skin.mult               # Actualizamos el mult de click
                 coleccion_skins.append(skin)         # Agrego la skin comprada a mi lista
 
-        # NOTA: Este método funcionará para otros animales SIEMPRE y cuando los incluya en coleccion_completa 
+            else: # Si NO lo puedo comprar:
+                temp_x = skin.x
+                skin.x = temp_x - 10
+                animate(skin, tween="bounce_start", duration = 0.2, x = temp_x)
+                skin.x = temp_x + 10
+                animate(skin, tween="bounce_end", duration = 0.2, x = temp_x)
+                skin.x = temp_x
+
+        # NOTA: Este método funcionará para otros animales SIEMPRE y cuando los incluya en coleccion_completa
 
     if (button == mouse.LEFT) and (modo_actual == "coleccion"):
          if boton_salir.collidepoint(pos):
@@ -334,6 +340,8 @@ def on_mouse_down(button, pos):
              if ( skin.collidepoint(pos) ):     # Si hice click sobre una skin YA DESBLOQUEADA:
                  animal.image = skin.image      # Cambiamos la skin de nuestro PJ
                  click_mult = skin.mult         # Actualizamos el mult de click
+                 skin.y = 180
+                 animate(skin, tween="bounce_end", duration = 0.5, y = 200)
              
 # CHEAT:
 
